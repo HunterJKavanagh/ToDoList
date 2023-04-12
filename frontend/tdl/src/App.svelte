@@ -1,49 +1,43 @@
 <script>
-  // const { default: axios } = require('axios');
-  import Counter from './lib/Counter.svelte'
+  import TaskCard from './lib/TaskCard.svelte';
 
-  let task_name = '';
+  import NewTaskv1 from './lib/NewTaskv1.svelte';
 
-	async function postTask () {
-		const res = await fetch('/addTask', {
-			method: 'POST',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
-      },
-			body: JSON.stringify({
-				name: task_name,
-			})
-		})
+  let result = []
 
-	}
+  async function getTasks () {
+    const res = await fetch('/getTasks', {
+      method: 'GET',
+    })
+
+    const json = await res.json()
+    const sjson = await JSON.stringify(json)
+    result = JSON.parse(sjson)
+    console.log(result)
+  }
+
+  getTasks ()
 </script>
 
-<main class="grid justify-items-center">
-  <h1 class="text-4xl">To Do List!</h1>
+<main class="">
+  <header class="bg-blue-500 text-white grid p-12">
+    <h1 class="text-4xl place-self-center">To Do List!</h1>
+  </header>
 
-  <div class="grid grid-cols-2">
-    <input type="text" placeholder="enter your name" bind:value={task_name}/>
-    <button class="" on:click={postTask}>POST</button>
-  </div>
+  <body class="grid justify-items-center">
+    <NewTaskv1 on:dbupdate={getTasks}></NewTaskv1>
 
-  <form method="POST" action="/addTask">
-    <label for="taskName">Task Name</label>
-    <input type="text" id="taskName" name="taskName"/>
-    <div>
-      <label for="taskName">Task Name</label>
-      <input type="text" id="taskName" name="taskName"/>
+    <div class="space-y-8">
+      {#each result as r}
+        <!-- <p>{r.taskName}| Length: {r.taskLength}</p> -->
+        <TaskCard>
+          <p slot="taskName">{r.taskName}</p>
+          <p slot="taskLength">{r.taskLength}</p>
+        </TaskCard>
+      {/each}
     </div>
-    <div>
-      <label for="dueDate">Due Date</label>
-      <input type="date" id="dueDate" name="dueDate"/>
-      <input type="time" id="time" name="time"/>
-    </div>
-    <div>
-      <label for="taskLength">Task Length</label>
-      <input type="number" id="taskLength" name="taskLength"/>
-    </div>
-    <button  type="submit">Submit</button>
-  </form>
+  </body>
+  
+
 
 </main>
