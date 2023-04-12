@@ -14,6 +14,9 @@ db.init_app(app)
 class Task(db.Model):
     taskName = db.Column(db.String, primary_key=True, unique=True, nullable=False)
     taskLength = db.Column(db.Integer)
+    taskDate = db.Column(db.String)
+    taskTime = db.Column(db.String)
+    taskDescription = db.Column(db.String)
 
     def __repr__(self):
         return f'<Task: {self.taskName}>'
@@ -22,13 +25,21 @@ class Task(db.Model):
 def addTask():
     data = request.get_json(force=True)
     print(f'Request: {data}')
-    task = Task(taskName=data['taskName'], taskLength=data['taskLength'])
-    db.session.add(task)
-    db.session.commit()
-    return {
-        'Task': data['taskName'],
-        'Added': 'Yes',
-    }
+    task = Task(taskName=data['taskName'], taskLength=data['taskLength'], taskDate=data['taskDate'], taskTime=data['taskTime'], taskDescription=data['taskDescription'])
+
+    if task.taskName == None:
+        return {
+            'Task': 'null',
+            'Added': 'No',
+        } 
+    else:
+        db.session.add(task)
+        db.session.commit()
+
+        return {
+            'Task': data['taskName'],
+            'Added': 'Yes',
+        }
 
 @app.route('/getTasks', methods=['GET'])
 def getTasks():
@@ -36,7 +47,7 @@ def getTasks():
     taskList = []
     for t in tasks:
         # taskList[t.taskName] = {'taskName': t.taskName, 'taskLength': t.taskLength}
-        taskList.append({'taskName': t.taskName, 'taskLength': t.taskLength})
+        taskList.append({'taskName': t.taskName, 'taskLength': t.taskLength, 'taskDate': t.taskDate, 'taskTime': t.taskTime, 'taskDescription': t.taskDescription})
     print(tasks)
     return taskList
 
