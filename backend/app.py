@@ -2,8 +2,9 @@ from flask import Flask, send_from_directory, request
 from flask_sqlalchemy import SQLAlchemy
 
 def get_uri():
+    return open('urip.txt').readline()
     # return open('uri.txt').readline()
-    return 'sqlite:///C:/Users/Hunter/Documents/Projects/ToDoList/database/todo.db'
+    # return 'sqlite:///C:/Users/Hunter/Documents/Projects/ToDoList/database/todo.db'
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = get_uri()
@@ -14,8 +15,8 @@ db.init_app(app)
 class Task(db.Model):
     taskName = db.Column(db.String, primary_key=True, unique=True, nullable=False)
     taskLength = db.Column(db.Integer)
-    taskDate = db.Column(db.String)
-    taskTime = db.Column(db.String)
+    taskDate = db.Column(db.Date)
+    taskTime = db.Column(db.Time)
     taskDescription = db.Column(db.String)
 
     def __repr__(self):
@@ -43,7 +44,8 @@ def addTask():
 
 @app.route('/getTasks', methods=['GET'])
 def getTasks():
-    tasks = Task.query.all()
+    # tasks = Task.query.all()
+    tasks = Task.query.order_by(Task.taskDate).order_by(Task.taskTime).all()
     taskList = []
     for t in tasks:
         # taskList[t.taskName] = {'taskName': t.taskName, 'taskLength': t.taskLength}

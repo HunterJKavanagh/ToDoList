@@ -19,7 +19,7 @@
   function timeToDeadline(date, time) {
     let today = new Date()
     console.log()
-    return Math.round(Math.abs(new Date(date + ' ' + time) - today) / 1000 / 60 / 60 / 24)
+    return Math.round((new Date(date + ' ' + time) - today) / 1000 / 60 / 60 / 24)
   }
 
   getTasks ()
