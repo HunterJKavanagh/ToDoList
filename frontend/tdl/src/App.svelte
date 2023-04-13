@@ -35,7 +35,7 @@
     <NewTaskv1 on:dbupdate={getTasks}></NewTaskv1>
 
     <h2 class="text-2xl pt-4 pb-2">Task List</h2>
-    <div class="space-y-8">
+    <div class="space-y-4">
       {#each result as r}
         <!-- <p>{r.taskName}| Length: {r.taskLength}</p> -->
         <TaskCard taskName={r.taskName} taskLength={r.taskLength} taskDescription={r.taskDescription} timeToDeadline={timeToDeadline(r.taskDate, r.taskTime)}></TaskCard>
