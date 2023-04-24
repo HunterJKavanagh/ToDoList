@@ -18,16 +18,16 @@
 
   function timeToDeadline(date, time) {
     let today = new Date()
-    console.log()
     return Math.round((new Date(date + ' ' + time) - today) / 1000 / 60 / 60 / 24)
   }
 
-  getTasks ()
+  getTasks()
 </script>
 
 <main class="">
-  <header class="bg-blue-800 text-white grid p-12">
-    <h1 class="text-4xl place-self-center">To Do List!</h1>
+  <header class="bg-blue-800 text-white flex justify-between p-2 sticky top-0">
+    <h1 class="text-xl">To Do List!</h1>
+    <div class="text-xl">Sing Up Here!</div>
   </header>
 
   <body class="grid justify-items-center">

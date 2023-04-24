@@ -1,57 +1,31 @@
 from flask import Flask, send_from_directory, request
-from flask_sqlalchemy import SQLAlchemy
-
-def get_uri():
-    return open('urip.txt').readline()
-    # return open('uri.txt').readline()
-    # return 'sqlite:///C:/Users/Hunter/Documents/Projects/ToDoList/database/todo.db'
+from supabase import create_client, Client
+import os
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = get_uri()
 
-db = SQLAlchemy()
-db.init_app(app)
-
-class Task(db.Model):
-    taskName = db.Column(db.String, primary_key=True, unique=True, nullable=False)
-    taskLength = db.Column(db.Integer)
-    taskDate = db.Column(db.Date)
-    taskTime = db.Column(db.Time)
-    taskDescription = db.Column(db.String)
-
-    def __repr__(self):
-        return f'<Task: {self.taskName}>'
+url: str = os.environ.get("SUPABASE_URL")
+key: str = os.environ.get("SUPABASE_KEY")
+supabase: Client = create_client(url, key)
 
 @app.route('/postTask', methods=['POST'])
 def addTask():
     data = request.get_json(force=True)
-    print(f'Request: {data}')
-    task = Task(taskName=data['taskName'], taskLength=data['taskLength'], taskDate=data['taskDate'], taskTime=data['taskTime'], taskDescription=data['taskDescription'])
 
-    if task.taskName == None:
-        return {
-            'Task': 'null',
-            'Added': 'No',
-        } 
-    else:
-        db.session.add(task)
-        db.session.commit()
+    # d = supabase.table('tasks').insert({'taskName': data['taskName'], 'taskLength': data['taskLength'], 'taskDate': data['taskDate'], 'taskTime': data['taskTime'], 'taskDescription': data['taskDescription']}).execute()
+    d = supabase.table('tasks').insert(data).execute()
 
-        return {
-            'Task': data['taskName'],
-            'Added': 'Yes',
-        }
+    return {
+        'Task': 'null',
+        'Added': 'No',
+    } 
 
 @app.route('/getTasks', methods=['GET'])
 def getTasks():
-    # tasks = Task.query.all()
-    tasks = Task.query.order_by(Task.taskDate).order_by(Task.taskTime).all()
-    taskList = []
-    for t in tasks:
-        # taskList[t.taskName] = {'taskName': t.taskName, 'taskLength': t.taskLength}
-        taskList.append({'taskName': t.taskName, 'taskLength': t.taskLength, 'taskDate': t.taskDate, 'taskTime': t.taskTime, 'taskDescription': t.taskDescription})
-    print(tasks)
-    return taskList
+    tasks = supabase.table('tasks').select('*').order(column='taskTime', desc=False).execute()
+    for t in tasks.data:
+        print(t)
+    return tasks.data
 
 @app.route('/')
 def client():
