@@ -4,6 +4,8 @@
   const dispatch = createEventDispatcher();
 
 
+
+
   let taskName = null
   let taskLength = null
   let taskDate = null
@@ -12,20 +14,24 @@
   let result = null
 
   async function postTask () {
-    const res = await fetch('/postTask', {
-      method: 'POST',
-      body: JSON.stringify({
-        taskName,
-        taskLength,
-        taskDate,
-        taskTime,
-        taskDescription,
-      })
-    })
+    // const res = await fetch('/postTask', {
+    //   method: 'POST',
+    //   body: JSON.stringify({
+    //     taskName,
+    //     taskLength,
+    //     taskDate,
+    //     taskTime,
+    //     taskDescription,
+    //   })
+    // })
 
-    const json = await res.json()
-    result = JSON.stringify(json)
-    console.log(result)
+    // const json = await res.json()
+    // result = JSON.stringify(json)
+    // console.log(result)
+
+    const {error} = await supabase
+      .from('tasks')
+      .insert({taskName, taskLength, taskDate, taskTime, taskDescription})
 
     dispatch('dbupdate');
 
